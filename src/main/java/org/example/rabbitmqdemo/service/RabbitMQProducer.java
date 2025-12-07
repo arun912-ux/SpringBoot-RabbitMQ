@@ -1,6 +1,7 @@
 package org.example.rabbitmqdemo.service;
 
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,10 +18,11 @@ public class RabbitMQProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(fixedRate = 1_000 * 5)
+    @WithSpan
+    @Scheduled(fixedRate = 1_000 * 10)
     public void send() {
         Message message = new Message("Hello World".getBytes());
-        log.info("send message: {}", message);
+        log.info("send message: {}\n", message);
         rabbitTemplate.send("my-exchange", "my-routing-key", message);
     }
 }
