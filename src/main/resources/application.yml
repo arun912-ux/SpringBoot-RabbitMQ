@@ -1,0 +1,64 @@
+spring:
+  rabbitmq:
+    host: 192.168.1.71
+    port: 5672
+    addresses:
+    username: root
+    password: root123
+    routing-key: my-routing-key
+
+
+
+
+
+
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,trace,logfile,prometheus,threaddump
+      base-path: /actuator
+
+  tracing:
+    sampling:
+      probability: 0.5
+    export:
+      enabled: true
+      otlp:
+        enabled: true
+
+    propagation:
+      consume: W3C, B3, B3_MULTI
+      produce: W3C, B3, B3_MULTI
+
+
+
+
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://192.168.1.93:4318/v1/traces
+          compression: gzip
+    logging:
+      export:
+        otlp:
+          endpoint: http://192.168.1.93:4318/v1/metrics
+          compression: gzip
+          transport: http
+
+  otlp:
+    metrics:
+      export:
+        url: http://192.168.1.93:4318/v1/metrics
+        enabled: false
+
+
+
+
+
