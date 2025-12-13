@@ -1,20 +1,29 @@
 package org.example.rabbitmqdemo.service;
 
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@ConditionalOnBooleanProperty(value = "rabbit.producer.enabled", havingValue = false)
 public class RabbitMQListener {
+
+    @Value("${rabbit.producer.enabled}")
+    public boolean producerEnabled;
+
+    @Value("${spring.rabbitmq.routing-key}")
+    private String routingKey;
+
+    @Value("${spring.rabbitmq.exchange}")
+    private String exchange;
+
+    @Value("${spring.rabbitmq.queue}")
+    private String queue;
 
 //    private final Tracer tracer;
 //
@@ -23,10 +32,12 @@ public class RabbitMQListener {
 //    }
 
     @WithSpan
-    @RabbitListener(queues = "my-queue")
+    @RabbitListener(queues = "#{ @queue }")
     public void process(Message message) {
-        log.info("RabbitMQListener: {}\n\n", message);
-    }
+        byte[] messageBodyBytes = message.getBody();
+        String messageBody = new String(messageBodyBytes);
+        log.info("RabbitMQListener: Properties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
 
+    }
 
 }

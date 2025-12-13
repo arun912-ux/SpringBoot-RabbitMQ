@@ -22,6 +22,12 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.routing-key}")
     private String routingKey;
 
+    @Value("${spring.rabbitmq.exchange}")
+    private String exchange;
+
+    @Value("${spring.rabbitmq.queue}")
+    private String queue;
+
     @Value("${spring.rabbitmq.host}")
     private String rabbitHost;
 
@@ -34,12 +40,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue queue() {
-        return new Queue("my-queue", true);
+        return new Queue(queue, true);
     }
 
     @Bean
     public Exchange exchange() {
-        return new TopicExchange("my-exchange");
+        return new TopicExchange(exchange, true, false);
     }
 
 //    @Bean
@@ -53,10 +59,10 @@ public class RabbitMQConfig {
 //    }
 
     @Bean
-    public Binding binding() {
+    public Binding binding(Queue queue, Exchange exchange) {
         return BindingBuilder
-                .bind(queue())
-                .to(exchange())
+                .bind(queue)
+                .to(exchange)
                 .with(routingKey).noargs();
     }
 
