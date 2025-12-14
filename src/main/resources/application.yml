@@ -74,6 +74,6 @@ management:
 
 rabbit:
   producer:
-    enabled: false
+    enabled: true
 
 

@@ -59,7 +59,7 @@ public class RabbitMQProducer {
         properties.setCorrelationId(uuid);
         properties.setContentLength(messageString.getBytes().length);
         properties.setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
-        properties.setDeliveryTag(1);
+//        properties.setDeliveryTag(1);
         return new Message(messageString.getBytes(), properties);
 
     }

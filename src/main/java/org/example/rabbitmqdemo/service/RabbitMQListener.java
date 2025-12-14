@@ -33,8 +33,9 @@ public class RabbitMQListener {
 
     @WithSpan
     @RabbitListener(queues = "#{ @queue }")
-    public void process(Message message) {
+    public void process(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
+        Thread.sleep(500 * 1);
         String messageBody = new String(messageBodyBytes);
         log.info("RabbitMQListener: Properties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
 
