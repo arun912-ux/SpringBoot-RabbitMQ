@@ -25,6 +25,18 @@ public class RabbitMQListener {
     @Value("${spring.rabbitmq.queue}")
     private String queue;
 
+    @Value("${spring.rabbitmq.mqtt-routing-key}")
+    private String mqttRoutingKey;
+
+    @Value("${spring.rabbitmq.mqtt-exchange}")
+    private String mqttExchange;
+
+    @Value("${spring.rabbitmq.mqtt-queue}")
+    private String mqttQueue;
+
+
+
+
 //    private final Tracer tracer;
 //
 //    public RabbitMQListener(OpenTelemetry openTelemetry) {
@@ -35,10 +47,18 @@ public class RabbitMQListener {
     @RabbitListener(queues = "#{ @queue }")
     public void process(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
-        Thread.sleep(500 * 1);
+        Thread.sleep(500 * 2);
         String messageBody = new String(messageBodyBytes);
-        log.info("RabbitMQListener: Properties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
+        log.info("RabbitMQListener:\nAMQP \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
+    }
 
+    @WithSpan
+    @RabbitListener(queues = "#{ @mqttQueue }")
+    public void processMQTT(Message message) throws InterruptedException {
+        byte[] messageBodyBytes = message.getBody();
+        Thread.sleep(500 * 2);
+        String messageBody = new String(messageBodyBytes);
+        log.info("RabbitMQListener:\nMQTT \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }
 
 }
