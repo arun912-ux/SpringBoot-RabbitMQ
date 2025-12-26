@@ -47,7 +47,7 @@ public class RabbitMQListener {
     @RabbitListener(queues = "#{ @queue }")
     public void process(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
-        Thread.sleep(500 * 2);
+        Thread.sleep(500 * 2 * 1/2);
         String messageBody = new String(messageBodyBytes);
         log.info("RabbitMQListener:\nAMQP \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }
@@ -56,7 +56,7 @@ public class RabbitMQListener {
     @RabbitListener(queues = "#{ @mqttQueue }")
     public void processMQTT(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
-        Thread.sleep(500 * 2);
+        Thread.sleep(500 * 2 * 1/2);
         String messageBody = new String(messageBodyBytes);
         log.info("RabbitMQListener:\nMQTT \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }

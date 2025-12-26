@@ -12,6 +12,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,12 +48,14 @@ public class RabbitMQConfig {
 
 
     @Bean
+    @ConditionalOnBooleanProperty(value = "rabbit.producer.enabled", havingValue = false, matchIfMissing = false)
     public Queue queue() {
         return new Queue(queue, true);
     }
 
 
     @Bean("mqttQueue")
+    @ConditionalOnBooleanProperty(value = "rabbit.producer.enabled", havingValue = false, matchIfMissing = false)
     public Queue queueMQTT() {
         return new Queue(mqttQueue, true);
     }
@@ -78,6 +81,7 @@ public class RabbitMQConfig {
 //    }
 
     @Bean
+    @ConditionalOnBooleanProperty(value = "rabbit.producer.enabled", havingValue = false, matchIfMissing = false)
     public Binding binding(Queue queue, Exchange exchange) {
         return BindingBuilder
                 .bind(queue)
@@ -86,6 +90,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    @ConditionalOnBooleanProperty(value = "rabbit.producer.enabled", havingValue = false, matchIfMissing = false)
     public Binding bindingMQTT(@Qualifier("mqttQueue") Queue queue, TopicExchange amqTopicExchange) {
         return BindingBuilder
                 .bind(queue)
@@ -102,6 +107,7 @@ public class RabbitMQConfig {
 //    public MessageConverter messageConverter() {
 //        return new SimpleMessageConverter();
 //    }
+
     @Bean
     public MessageConverter simpleMessageConverter() {
         return new SimpleMessageConverter();

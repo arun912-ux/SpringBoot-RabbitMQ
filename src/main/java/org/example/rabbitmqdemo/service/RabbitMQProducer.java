@@ -38,7 +38,7 @@ public class RabbitMQProducer {
     }
 
     @WithSpan
-    @Scheduled(fixedRate = 1_000L * 1/4)
+    @Scheduled(fixedRate = 1_000L * 1/16)
     public void sendToRabbitMQ() {
         if (producerEnabled) {
 

@@ -5,12 +5,12 @@ spring:
     addresses:
     username: root
     password: root123
-    routing-key: my-routing-key
-    exchange: my-exchange
-    mqtt-exchange: amq.topic
-    mqtt-routing-key: my.routing.key
-    queue: my-queue
-    mqtt-queue: mqtt-queue
+    routing-key: ${ROUTING_KEY:my.routing.key}
+    exchange: ${EXCHANGE:my.exchange}
+    mqtt-exchange: ${MQTT_EXCHANGE:amq.topic}
+    mqtt-routing-key: ${MQTT_ROUTING_KEY:my.routing.key}
+    queue: ${QUEUE:my.queue}
+    mqtt-queue: ${MQTT_QUEUE:mqtt.queue}
     listener:
       simple:
         acknowledge-mode: auto
