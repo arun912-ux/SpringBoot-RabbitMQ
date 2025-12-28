@@ -1,6 +1,9 @@
 package org.example.rabbitmqdemo.service;
 
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.annotation.Observed;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -22,8 +25,8 @@ public class RabbitMQProducer {
     @Value("${rabbit.producer.enabled}")
     private boolean producerEnabled;
 
-    @Value("${spring.rabbitmq.routing-key}")
-    private String routingKey;
+//    @Value("${spring.rabbitmq.routing-key}")
+    private String routingKey = "my.*.key";
 
     @Value("${spring.rabbitmq.exchange}")
     private String exchange;
@@ -32,13 +35,17 @@ public class RabbitMQProducer {
     private Integer counter = 0;
 
     private final RabbitTemplate rabbitTemplate;
+    private final ObservationRegistry observationRegistry;
 
-    public RabbitMQProducer(RabbitTemplate rabbitTemplate) {
+    public RabbitMQProducer(RabbitTemplate rabbitTemplate,
+                            ObservationRegistry observationRegistry) {
         this.rabbitTemplate = rabbitTemplate;
+        this.observationRegistry = observationRegistry;
     }
 
     @WithSpan
-    @Scheduled(fixedRate = 1_000L * 1/16)
+    @Observed(name = "rabbitmq.produce")
+    @Scheduled(fixedRateString = "${scheduled.fixed}")
     public void sendToRabbitMQ() {
         if (producerEnabled) {
 
@@ -50,10 +57,20 @@ public class RabbitMQProducer {
 //            rabbitTemplate.sendAndReceive("my-exchange", "my-routing-key", message);
             counter++;
 
+            Observation.createNotStarted("rabbit-mq-producer-send-to-rabbitmq", observationRegistry)
+                .lowCardinalityKeyValue("name", "61-rabbit-mq-producer-send-to-rabbitmq")
+                .contextualName("62-rabbit-mq-producer-send-to-rabbitmq")
+                .observe(() -> {
+                            rabbitTemplate.send(exchange, routingKey, message);
+                        }
+                );
+
         }
     }
 
-    private Message buildMessage(String messageString, String uuid) {
+    @WithSpan
+    @Observed(name = "rabbitmq.buildMessage")
+    public Message buildMessage(String messageString, String uuid) {
         MessageProperties properties = new MessageProperties();
         properties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
         properties.setCorrelationId(uuid);
