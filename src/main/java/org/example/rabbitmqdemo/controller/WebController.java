@@ -3,7 +3,6 @@ package org.example.rabbitmqdemo.controller;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.annotation.Observed;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.example.rabbitmqdemo.service.RabbitMQProducer;
 import org.springframework.amqp.core.Message;
@@ -44,21 +43,12 @@ public class WebController {
     @GetMapping("send")
     @ResponseBody
     @Observed(name = "WebController.send")
-    @WithSpan
     public String send(@RequestParam(required = false) Optional<String> var) throws InterruptedException {
         Thread.sleep(1000L);
         log.info("inside send method");
-//        Message message = new Message("123".getBytes(), new MessageProperties());
 
         Span currentSpan = Span.current();
         currentSpan.setAttribute("var", var.orElse("DEFAULT"));
-//        Observation.createNotStarted("web-controller-send", observationRegistry)
-//                .lowCardinalityKeyValue("name", "55-web-controller-send")
-//                .contextualName("56-web-controller-send")
-//                .observe(() -> {
-//                            rabbitMQProducer.buildMessage(var.orElse("DEFAULT"), UUID.randomUUID().toString());
-//                        }
-//                );
 
         Message message = rabbitMQProducer.buildMessage(var.orElse("DEFAULT"), UUID.randomUUID().toString());
         return "sent : " + new String(message.getBody());

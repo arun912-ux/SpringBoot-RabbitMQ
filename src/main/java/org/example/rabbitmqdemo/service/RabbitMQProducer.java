@@ -1,10 +1,8 @@
 package org.example.rabbitmqdemo.service;
 
 
-import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.annotation.Observed;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageDeliveryMode;
@@ -25,7 +23,7 @@ public class RabbitMQProducer {
     @Value("${rabbit.producer.enabled}")
     private boolean producerEnabled;
 
-//    @Value("${spring.rabbitmq.routing-key}")
+    //    @Value("${spring.rabbitmq.routing-key}")
     private String routingKey = "my.*.key";
 
     @Value("${spring.rabbitmq.exchange}")
@@ -43,7 +41,7 @@ public class RabbitMQProducer {
         this.observationRegistry = observationRegistry;
     }
 
-    @WithSpan
+//    @WithSpan
     @Observed(name = "rabbitmq.produce")
     @Scheduled(fixedRateString = "${scheduled.fixed}")
     public void sendToRabbitMQ() {
@@ -57,18 +55,10 @@ public class RabbitMQProducer {
 //            rabbitTemplate.sendAndReceive("my-exchange", "my-routing-key", message);
             counter++;
 
-            Observation.createNotStarted("rabbit-mq-producer-send-to-rabbitmq", observationRegistry)
-                .lowCardinalityKeyValue("name", "61-rabbit-mq-producer-send-to-rabbitmq")
-                .contextualName("62-rabbit-mq-producer-send-to-rabbitmq")
-                .observe(() -> {
-                            rabbitTemplate.send(exchange, routingKey, message);
-                        }
-                );
-
         }
     }
 
-    @WithSpan
+//    @WithSpan
     @Observed(name = "rabbitmq.buildMessage")
     public Message buildMessage(String messageString, String uuid) {
         MessageProperties properties = new MessageProperties();

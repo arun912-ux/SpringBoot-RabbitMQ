@@ -1,6 +1,5 @@
 package org.example.rabbitmqdemo.service;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -43,7 +42,7 @@ public class RabbitMQListener {
 //        this.tracer = openTelemetry.getTracer(getClass().getSimpleName());
 //    }
 
-    @WithSpan
+//    @WithSpan
     @RabbitListener(queues = "#{ @queue }")
     public void process(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
@@ -52,7 +51,7 @@ public class RabbitMQListener {
         log.info("RabbitMQListener:\nAMQP \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }
 
-    @WithSpan
+//    @WithSpan
     @RabbitListener(queues = "#{ @mqttQueue }")
     public void processMQTT(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
