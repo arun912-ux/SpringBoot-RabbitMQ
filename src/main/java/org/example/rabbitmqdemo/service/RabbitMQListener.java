@@ -34,28 +34,19 @@ public class RabbitMQListener {
     private String mqttQueue;
 
 
-
-
-//    private final Tracer tracer;
-//
-//    public RabbitMQListener(OpenTelemetry openTelemetry) {
-//        this.tracer = openTelemetry.getTracer(getClass().getSimpleName());
-//    }
-
-//    @WithSpan
     @RabbitListener(queues = "#{ @queue }")
     public void process(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
-        Thread.sleep(500 * 2 * 1/2);
+        Thread.sleep(500 * 2 * 1 / 2);
         String messageBody = new String(messageBodyBytes);
         log.info("RabbitMQListener:\nAMQP \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }
 
-//    @WithSpan
+    //    @WithSpan
     @RabbitListener(queues = "#{ @mqttQueue }")
     public void processMQTT(Message message) throws InterruptedException {
         byte[] messageBodyBytes = message.getBody();
-        Thread.sleep(500 * 2 * 1/2);
+        Thread.sleep(500 * 2 * 1 / 2);
         String messageBody = new String(messageBodyBytes);
         log.info("RabbitMQListener:\nMQTT \nProperties: {}\nBody: {}\n\n", message.getMessageProperties(), messageBody);
     }

@@ -1,7 +1,6 @@
 package org.example.rabbitmqdemo.service;
 
 
-import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -33,15 +32,12 @@ public class RabbitMQProducer {
     private Integer counter = 0;
 
     private final RabbitTemplate rabbitTemplate;
-    private final ObservationRegistry observationRegistry;
 
-    public RabbitMQProducer(RabbitTemplate rabbitTemplate,
-                            ObservationRegistry observationRegistry) {
+    public RabbitMQProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
-        this.observationRegistry = observationRegistry;
     }
 
-//    @WithSpan
+    //    @WithSpan
     @Observed(name = "rabbitmq.produce")
     @Scheduled(fixedRateString = "${scheduled.fixed}")
     public void sendToRabbitMQ() {
@@ -58,8 +54,6 @@ public class RabbitMQProducer {
         }
     }
 
-//    @WithSpan
-    @Observed(name = "rabbitmq.buildMessage")
     public Message buildMessage(String messageString, String uuid) {
         MessageProperties properties = new MessageProperties();
         properties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
