@@ -27,95 +27,10 @@ scheduled:
 
 
 
-management:
-  endpoint:
-    health:
-      show-details: always
-
-  endpoints:
-    web:
-      exposure:
-        include: health,metrics,trace,logfile,prometheus,threaddump
-      base-path: /actuator
-
-
-
-
-  opentelemetry:
-    tracing:
-      export:
-        otlp:
-#          endpoint: http://192.168.1.93:4318/v1/traces                                 # otel-collector
-          endpoint: https://otlp-gateway-prod-ap-south-1.grafana.net/otlp/v1/traces     # directly to Grafana Tempo
-          headers:
-            Authorization: "Basic MTAyMDYxOTpnbGNfZXlKdklqb2lNVEl3TlRRMk1TSXNJbTRpT2lKemRHRmpheTB4TURJd05qRTVMVzkwYkhBdGQzSnBkR1V0YjNSc2NDMWpiMjV1WldOMGIzSWlMQ0pySWpvaVFVeEdTRkJOT1ZZMldUaGFPRGcwUVRNd2NFWTJPRVZFSWl3aWJTSTZleUp5SWpvaWNISnZaQzFoY0MxemIzVjBhQzB4SW4xOQ=="
-          compression: gzip
-          transport: http
-
-
-# Grafana Loki or FluentBit
-#    logging:
-#      export:
-#        otlp:
-#          endpoint: http://192.168.1.93:4318/v1/logs
-#          compression: gzip
-#          transport: http
-
-
-  otlp:
-    metrics:
-      export:
-        url: http://192.168.1.93:4318/v1/metrics
-        enabled: false
-    logging:
-      export:
-        enabled: false
-    tracing:
-      export:
-        enabled: false
-
-  observations:
-    annotations:
-      enabled: true
-
-
-  logging:
-    export:
-      enabled: false
-      otlp:
-        enabled: false
-
-
-  metrics:
-    enable:
-      all: true
-    export:
-      defaults:
-        enabled: false
-
-  tracing:
-    sampling:
-      probability: 1.0
-    export:
-      enabled: true
-      otlp:
-        enabled: true
-
-
-    propagation:
-      consume: W3C, B3, B3_MULTI
-      produce: W3C
-
-
-
-
 rabbit:
   producer:
     enabled: true
 
 
-logging:
-  level:
-    io:
-      micrometer:
-        observation: DEBUG
+
+
